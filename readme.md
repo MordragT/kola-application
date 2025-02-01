@@ -1,12 +1,8 @@
-<div align=center>
-
 # ❄️ kola-application 🚀
 
- [![NixOS](https://img.shields.io/badge/Flakes-Nix-informational.svg?logo=nixos&style=for-the-badge)](https://nixos.org) ![License](https://img.shields.io/github/license/mordragt/nix-templates?style=for-the-badge) 
+ [![NixOS](https://img.shields.io/badge/Flakes-Nix-informational.svg?logo=nixos&style=for-the-badge)](https://nixos.org) ![License](https://img.shields.io/github/license/mordragt/nix-templates?style=for-the-badge)
 
 DevOps/GitOps Application Repository using Continuos Integration and Continuous Delivery
-
-</div>
 
 ## About
 
@@ -36,6 +32,6 @@ DevOps/GitOps Application Repository using Continuos Integration and Continuous 
 - `nix build` : builds the package to the symbolic `result` directory
 - `nix run`: runs the package
 
-#### Reference
+## Reference
 
 1. [Github Actions](https://docs.github.com/en/actions)

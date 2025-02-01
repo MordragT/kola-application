@@ -1,36 +1,53 @@
 {
   description = "Kola Application";
 
-  inputs.utils.url = "github:numtide/flake-utils";
+  inputs = {
+    utils.url = "github:numtide/flake-utils";
+  };
 
   outputs = {
     self,
     nixpkgs,
     utils,
+    ...
   }:
-    utils.lib.eachDefaultSystem (
+    utils.lib.eachDefaultSystem
+    (
       system: let
         pkgs = import nixpkgs {inherit system;};
+        toolchain = pkgs.rustPlatform;
       in rec
       {
-        # Executed by `nix build .#hello`
-        packages.hello = pkgs.hello;
         # Executed by `nix build`
-        packages.default = packages.hello;
+        packages.default = toolchain.buildRustPackage {
+          pname = "todo-service";
+          version = "0.1.0";
+          src = ./.;
+          cargoLock.lockFile = ./Cargo.lock;
 
-        # Executed by `nix run .#hello`
-        apps.hello = utils.lib.mkApp {drv = packages.hello;};
-        # Executed by `nix run`
-        apps.default = apps.hello;
-
-        # Used by `nix develop .#hello`
-        devShells.hello = pkgs.mkShell rec {
-          buildInputs = with pkgs; [];
-
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
+          # For other makeRustPlatform features see:
+          # https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/rust.section.md#cargo-features-cargo-features
         };
+
+        # Executed by `nix run`
+        apps.default = utils.lib.mkApp {drv = packages.default;};
+
         # Used by `nix develop`
-        devShells.default = devShells.hello;
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            (with toolchain; [
+              cargo
+              rustc
+              rustLibSrc
+            ])
+            clippy
+            rustfmt
+            pkg-config
+          ];
+
+          # Specify the rust-src path (many editors rely on this)
+          RUST_SRC_PATH = "${toolchain.rustLibSrc}";
+        };
       }
     )
     // rec {
